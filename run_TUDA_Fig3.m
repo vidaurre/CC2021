@@ -52,7 +52,7 @@ for subj = 1:15
     X2 = Xpca(:,1:116); e(116)
     clear Xpca
     
-    %%% Run permutation testing on TUDA 
+    %%% generate surrogates for TUDA (panel B)
     % basic options
     options = struct();
     options.K = 8; % no. of states 
@@ -70,14 +70,12 @@ for subj = 1:15
     gc2(gc2(:)>1) = 1;
     options.Gamma_constraint = gc2;
     % run
-    [pvals_oscl,perms_oscl,~,pvals_oscl_std,perms_oscl_std] = tudatest(X2,Y,T,options);
+    [~,perms_oscl,~,~,perms_oscl_std] = tudatest(X2,Y,T,options);
     % save
     if do_size
-        save(['out/predict_size_' str1 '.mat'],...
-            'pvals_oscl_std','perms_oscl_std','pvals_oscl','perms_oscl')
+        save(['out/predict_size_' str1 '.mat'],'perms_oscl_std','perms_oscl')
     else
-        save(['out/predict_animate_' str1 '.mat'],...
-            'pvals_oscl_std','perms_oscl_std','pvals_oscl','perms_oscl')
+        save(['out/predict_animate_' str1 '.mat'],'perms_oscl_std','perms_oscl')
     end
     
     %%% Cross-validation accuracy per state 
@@ -95,7 +93,7 @@ for subj = 1:15
             'acc_state','acc_time','Gamma_tudacv','-append')
     end
     
-    %%% Additional tests 
+    %%% Additional tests (panel C) 
     % different timing for different categories? 
     pvalsTimingGamma = testGammaAcrossStimuli (Gamma_tudacv,Y,T,1000,250);
     % different phasic configurations at state peak time points between categories?
