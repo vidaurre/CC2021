@@ -1,4 +1,4 @@
-function [pval,perms] = testPLF_timevarying(X,Y,T,Gamma,Nperm)
+function [pval,pval_crosschan,perms] = testPLF_timevarying(X,Y,T,Gamma,Nperm)
 % is PLF stronger between than across classes, at the peak time of each
 % state?
 
@@ -28,8 +28,8 @@ N1 = sum(Y==ucl(1));
 N2 = sum(Y==ucl(2));
 cl0 = Y;
 
-pval = zeros(K,1); 
-perms = zeros(Nperm,K);
+pval = zeros(K,p); 
+perms = zeros(Nperm,K,p);
 
 for j = 1:p
     Ph = zeros(ttrial,N);
@@ -57,13 +57,21 @@ for j = 1:p
             ind2 = Y==ucl(2);
             plf1 = abs(sum( Ph(t,ind1) )) / N1;
             plf2 = abs(sum( Ph(t,ind2) )) / N2;
-            perms(r,k) = perms(r,k) + (plf1 + plf2) / 2;
+            perms(r,k,j) = perms(r,k,j) + (plf1 + plf2) / 2;
         end
+    end
+    for k = 1:K
+        pval(k,j) = sum(perms(1,k,j) <= perms(:,k,j)) / (Nperm+1);
     end
 end
 
+pval_crosschan = zeros(K,1);
 for k = 1:K
-    pval(k) = sum(perms(1,k) <= perms(:,k)) / (Nperm+1);
+    p1 = mean(perms(1,k,:));
+    p2 = mean(squeeze(perms(:,k,:)),2);
+    pval_crosschan(k) = sum(p1 <= p2) / (Nperm+1);
 end
+
+
 
 end

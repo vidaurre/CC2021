@@ -16,7 +16,7 @@ else
     K = size(Gamma,3);
 end
 
-changepoints = zeros(K-1,1);
+changepoints = zeros(N,K-1);
 pvals = zeros(K-1,1);
 
 for k = 2:K 
